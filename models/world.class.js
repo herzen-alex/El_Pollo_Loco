@@ -14,10 +14,22 @@ class World {
         this.keyboard = keyboard;
         this.draw();
         this.setWorld();
+        this.checkCollidions();
     }
 
     setWorld() {
         this.character.world = this;
+    }
+
+    checkCollidions() {
+        setInterval(() => {
+            this.level.enemies.forEach((enemy) => {
+                if (this.character.isColliding(enemy)) {
+                    this.character.hit();
+                    console.log('Collision width Character', this.character.energy);  
+                }
+            });
+        }, 200);
     }
 
     draw() {
@@ -48,17 +60,33 @@ class World {
 
     addToMap(mo) {
         if (mo.otherDirection) {
-            this.ctx.save();
-            this.ctx.translate(mo.width, 0)
-            this.ctx.scale(-1, 1);
-            mo.x = mo.x * -1;
+           this.flipImage(mo); 
         }
 
-        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+        mo.draw(this.ctx);
+        mo.drawFrame(this.ctx);
 
         if (mo.otherDirection) {
-            mo.x = mo.x * -1;
-            this.ctx.restore();
+            this.flipImageBack(mo);
         }
     }
+
+    flipImage(mo) {
+        this.ctx.save();
+        this.ctx.translate(mo.width, 0)
+        this.ctx.scale(-1, 1);
+        mo.x = mo.x * -1;
+    }
+
+    flipImageBack(mo) {
+        mo.x = mo.x * -1;
+        this.ctx.restore();
+    }
+
+    // isColliding (obj) {
+    //     return  (this.X + this.width) >= obj.X && this.X <= (obj.X + obj.width) && 
+    //             (this.Y + this.offsetY + this.height) >= obj.Y &&
+    //             (this.Y + this.offsetY) <= (obj.Y + obj.height) && 
+
+    //     }
 }
