@@ -3,6 +3,10 @@ class Character  extends MovableObject {
     height = 280;
     width = 180;
     speed = 5;
+    snoring = new Audio('audio/snoring.mp3');
+    losing = new Audio('audio/lose.mp3');
+    walking = new Audio('audio/running.mp3');
+    jumping = new Audio('audio/jump.mp3');
 
     offset = {
         top: 80,
@@ -10,6 +14,8 @@ class Character  extends MovableObject {
         right: 10,
         bottom: 10
     }
+
+    lastActionTime = new Date().getTime();
 
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
@@ -48,6 +54,33 @@ class Character  extends MovableObject {
         'img/2_character_pepe/4_hurt/H-43.png'
     ];
 
+    IMAGES_IDLE = [
+        'img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/2_character_pepe/1_idle/idle/I-9.png',
+        'img/2_character_pepe/1_idle/idle/I-10.png'
+    ];
+
+    IMAGES_LONG_IDLE = [
+        'img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/2_character_pepe/1_idle/long_idle/I-20.png'
+    ];
+
+
     world;
 
     constructor() {
@@ -56,8 +89,12 @@ class Character  extends MovableObject {
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_LONG_IDLE);
         this.applyGravity();
         this.animate();
+        this.idleCharacter();
+        this.idleLongCharacter();  
     }
 
     animate() {
@@ -75,19 +112,22 @@ class Character  extends MovableObject {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this. otherDirection = false;
-            // this.walking_sound.play();
+            this.lastActionTime = new Date().getTime();
+            this.walking.play();
+            this.snoring.pause();
          }
-
          if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft();
             this. otherDirection = true;
-            // this.walking_sound.play();
+            this.lastActionTime = new Date().getTime();
+            this.walking.play();
+            this.snoring.pause();
          }
-
          if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
+            this.lastActionTime = new Date().getTime();
+            this.snoring.pause();
          }
-
          this.world.camera_x = -this.x + 100;
     }
 
@@ -101,10 +141,32 @@ class Character  extends MovableObject {
             this.playAnimation(this.IMAGES_JUMPING);
         } else {
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                // Walk animation
-                this.playAnimation(this.IMAGES_WALKING);   
+                this.playAnimation(this.IMAGES_WALKING);
             }
         }
     }
+
+    idleCharacter() {
+        setInterval(() => {
+            let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
+            if (timeSinceLastAction) {
+                this.playAnimation(this.IMAGES_IDLE);
+            }
+        }, 400);
+    }
+
+    idleLongCharacter() {
+        setInterval(() => {
+            let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
+            if (timeSinceLastAction > 6000) {
+                this.playAnimation(this.IMAGES_LONG_IDLE);
+                this.snoring.play();
+            }
+        }, 400);
+    }
+    
+
+    
 }
+
 
