@@ -12,11 +12,17 @@ function initLevel() {
             new Small_Chicken(),
             new Chicken(),
             new Small_Chicken(),
-            new Endboss(),
+            new Chicken(),
+            new Small_Chicken(),
+            new Endboss()
         ],
     
         [
-            new Cloud()
+            new Cloud(),
+            new Cloud(),
+            new Cloud(),
+            new Cloud(),
+            new Cloud(),
         ],
     
         [
@@ -52,11 +58,34 @@ function initLevel() {
         ],
     
         [
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
+            new Coin(),
             new Coin()
         ],
     
         [
-            new Bottle()
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
+            new Bottle(),
         ]
     
     );
