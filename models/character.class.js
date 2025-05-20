@@ -3,8 +3,12 @@ class Character  extends MovableObject {
     height = 280;
     width = 180;
     speed = 5;
+    isJumping = false;
+    world;
+
+
     snoring = new Audio('audio/snoring.mp3');
-    losing = new Audio('audio/lose.mp3');
+    deadAudio = new Audio('audio/dead_audio.mp3');
     walking = new Audio('audio/running.mp3');
     jumping = new Audio('audio/jump.mp3');
 
@@ -80,9 +84,6 @@ class Character  extends MovableObject {
         'img/2_character_pepe/1_idle/long_idle/I-20.png'
     ];
 
-
-    world;
-
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -109,62 +110,142 @@ class Character  extends MovableObject {
     }
 
     moveCharacter() {
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-            this.moveRight();
-            this. otherDirection = false;
-            this.lastActionTime = new Date().getTime();
+        this.walking.pause();
+        this.handleRight();
+        this.handleLeft();
+        this.handleJump();
+        this.world.camera_x = -this.x + 100;
+    }
+    
+   handleRight() {
+    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+        this.moveRight();
+        this.otherDirection = false;
+        this.snoring.pause();
+        this.lastActionTime = new Date().getTime();
+        if (!this.isAboveGround()) {
             this.walking.play();
-            this.snoring.pause();
-         }
-         if (this.world.keyboard.LEFT && this.x > 0) {
-            this.moveLeft();
-            this. otherDirection = true;
-            this.lastActionTime = new Date().getTime();
+        } else {
+            this.walking.pause();
+        }
+    }
+}
+
+handleLeft() {
+    if (this.world.keyboard.LEFT && this.x > 0) {
+        this.moveLeft();
+        this.otherDirection = true;
+        this.snoring.pause();
+        this.lastActionTime = new Date().getTime();
+        if (!this.isAboveGround()) {
             this.walking.play();
-            this.snoring.pause();
-         }
-         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-            this.jump();
-            this.lastActionTime = new Date().getTime();
-            this.snoring.pause();
-         }
-         this.world.camera_x = -this.x + 100;
+        } else {
+            this.walking.pause();
+        }
+    }
+}
+
+handleJump() {
+    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+        this.jump();
+        this.snoring.pause();
+        this.jumping.currentTime = 0;
+        this.jumping.play();
+        this.walking.pause();
+        this.lastActionTime = new Date().getTime();
+    }
+}
+
+    jump() {
+        this.speedY = 30;
+        this.isJumping = true;
     }
 
     playCharacter() {
-        if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
-        } else if(this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-        } else 
-        if (this.isAboveGround()) {
-            this.playAnimation(this.IMAGES_JUMPING);
-        } else {
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-        }
+        this.handleDeadAnimation();
+        this.handleHurtAnimation();
+        this.handleJumpingAnimation();
+        this.handleWalkingAnimation();
     }
+
+    /**
+ * Plays dead animation if character is dead.
+ */
+handleDeadAnimation() {
+    if (this.isDead()) {
+        this.playAnimation(this.IMAGES_DEAD);
+        this.snoring.pause();
+        this.pepeIsDead();
+    }
+}
+
+/**
+ * Plays hurt animation if character is hurt.
+ */
+handleHurtAnimation() {
+    if (this.isHurt() && !this.isDead()) {
+        this.playAnimation(this.IMAGES_HURT);
+        this.snoring.pause();
+    }
+}
+
+/**
+ * Plays jumping animation if character is in the air.
+ */
+handleJumpingAnimation() {
+    if (this.isAboveGround() && !this.isDead() && !this.isHurt()) {
+        this.playAnimation(this.IMAGES_JUMPING);
+        this.snoring.pause();
+    }
+}
+
+/**
+ * Plays walking animation if character is moving left or right.
+ */
+handleWalkingAnimation() {
+    if (!this.isAboveGround() &&
+        !this.isDead() &&
+        !this.isHurt() &&
+        (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+        this.playAnimation(this.IMAGES_WALKING);
+        this.snoring.pause();
+    }
+}
 
     idleCharacter() {
         setInterval(() => {
             let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-            if (timeSinceLastAction) {
+            if (timeSinceLastAction > 500) {
                 this.playAnimation(this.IMAGES_IDLE);
             }
         }, 400);
     }
-
-    idleLongCharacter() {
+    
+      idleLongCharacter() {
         setInterval(() => {
             let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-            if (timeSinceLastAction > 6000) {
+            if (timeSinceLastAction > 3000) {
                 this.playAnimation(this.IMAGES_LONG_IDLE);
                 this.snoring.play();
             }
         }, 400);
     }
     
+
+     pepeIsDead() {
+    if (this.energy == 0) {
+        this. deadAudio.play();
+        setTimeout(() => {
+            gameOver();
+        }, 1000);
+    }
+}
+
+jumpOn(enemy) {
+    enemy.die();
+    this.speedY = 15; 
+    this.jumping.play();  
+}
 
     
 }

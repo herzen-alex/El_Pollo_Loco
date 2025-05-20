@@ -25,15 +25,52 @@
     <script src="models/endboss.class.js"></script>
     <script src="levels/level1.js"></script>
     <script src="js/game.js"></script>
+    <script src="/script.js"></script>
     <title>El Pollo Loco</title>
 </head>
-<body onload="init()">
+<body>
 
-    <h1>El Pollo Loco</h1>
+    <div id="fullscreen" class="fullscreen">
 
-    <canvas id="canvas" width="720" height="480">
+        <h1>El Pollo Loco</h1>
+    
+        <div class="main" id="main" style="display: block;">
+            <div class="main_btn" onclick="startGame()">Start Game</div>
+        </div>
 
-    </canvas>
+        <div id="game_over" class="game_over" style="display: none;">
+            <img src="img/You won, you lost/Game over A.png" alt="">
+            <div class="flex_btn">
+                <div class="main_btn" onclick="restartGame()">Restart Game</div>
+                <div class="main_btn" onclick="backToStart()">Back to Start</div>
+            </div>
+        </div>
+
+        <div id="game_win" class="game_win" style="display: none;">
+            <img src="img/You won, you lost/You won A.png" alt="">
+            <div class="flex_btn">
+                <div class="main_btn" onclick="restartGame()">Restart Game</div>
+                <div class="main_btn" onclick="backToStart()">Back to Start</div>
+            </div>
+        </div>
+    
+        <canvas id="canvas" style="display: none;" width="720" height="480"></canvas>
+
+        <div class="main_menu">
+            <div class="menu">
+                <div>Move = < > </div>
+                <div>Throwe = D</div>
+                <div>Jump = Space</div>
+            </div>
+            <img onclick="toggleVolume()" id="volume" class="volume" src="assets/back_img/volumeon.png" alt="">
+        </div>
+
+        <div class="rotate_device" id="rotate_device" style="display: none;">
+            <h2>Plaese rotate your device</h2>
+            <img src="./assets/back_img/arrows-381439_640.png" alt="">
+        </div>
+    
+    </div>
     
 </body>
 </html>

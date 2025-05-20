@@ -18,10 +18,18 @@ body {
     font-family: 'zabars', Arial, Helvetica, sans-serif;
 }
 
+/* .fullscreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+} */
+
 h1 {
     font-size: 64px;
     letter-spacing: 3px;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
 
 canvas {
@@ -30,6 +38,89 @@ canvas {
     display: block;
 }
 
+.main {
+    background-image: url('img/9_intro_outro_screens/start/startscreen_1.png');
+    width: 780px;
+    height: 480px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: 16px;
+    justify-content: center;
+}
+
+.main_btn {
+    font-size: 56px;
+    text-align: center;
+    cursor: pointer;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    padding-top: 24px;
+    color: rgb(255, 193, 0);
+    transition: transform 0.3s ease;
+}
+
+.main_btn:hover {
+    transform: scale(1.1);
+}
+
+.flex_btn {
+    display: flex;
+    justify-content: space-between;
+}
+
+.menu {
+    display: flex;
+    font-size: 40px;
+    gap: 16px;
+    align-items: center;
+
+}
+
+.volume {
+    width: 40px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.volume:hover {
+    transform: scale(1.1);
+}
+
+.main_menu {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 8px;
+}
+
+.rotate_device {
+    z-index: 100;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    background-color: rgb(213,126,72);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+}
+
+.rotate_device img {
+    width: 60px;
+}
+
+.rotate_device h2 {
+    font-size: 56px;
+     letter-spacing: 3px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    text-align: center;
+
+}
 
 
 
