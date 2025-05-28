@@ -28,17 +28,17 @@ class DrawableObject {
     }
 
     drawFrame(ctx) {
-        if (
-          this instanceof Character ||
-          this instanceof Chicken ||
-          this instanceof Small_Chicken
-        ) {
-          ctx.beginPath();
-          ctx.lineWidth = "5";
-          ctx.strokeStyle = "blue";
-          ctx.rect(this.x, this.y, this.width, this.height);
-          ctx.stroke();
-        }
+        // if (
+        //   this instanceof Character ||
+        //   this instanceof Chicken ||
+        //   this instanceof Small_Chicken
+        // ) {
+        //   ctx.beginPath();
+        //   ctx.lineWidth = "5";
+        //   ctx.strokeStyle = "blue";
+        //   ctx.rect(this.x, this.y, this.width, this.height);
+        //   ctx.stroke();
+        // }
       }
 
      /**
@@ -53,7 +53,20 @@ class DrawableObject {
             });
         }
 
+        playOnce(images, duration) {
+          let i = 0;
+          let interval = setInterval(() => {
+            if (i >= images.length) {
+              clearInterval(interval);
+            } else {
+              this.img = this.imageCache[images[i]];
+              i++;
+            }
+          }, duration / images.length);
+        }
 
+
+        
 
 
 

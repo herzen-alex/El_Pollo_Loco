@@ -1,10 +1,13 @@
-class Character  extends MovableObject {
+class Character extends MovableObject {
     y = 150;
     height = 280;
     width = 180;
     speed = 5;
     isJumping = false;
     world;
+    amountCoins = 0;
+    amountBottle = 0;
+    isThrowingBottle = false;
 
 
     snoring = new Audio('audio/snoring.mp3');
@@ -14,8 +17,8 @@ class Character  extends MovableObject {
 
     offset = {
         top: 80,
-        left: 10,
-        right: 10,
+        left: 20,
+        right: 25,
         bottom: 10
     }
 
@@ -95,16 +98,16 @@ class Character  extends MovableObject {
         this.applyGravity();
         this.animate();
         this.idleCharacter();
-        this.idleLongCharacter();  
+        this.idleLongCharacter();
     }
 
     animate() {
 
-        setInterval( () => {
+        setInterval(() => {
             this.moveCharacter();
         }, 1000 / 60);
 
-        setInterval( () => {
+        setInterval(() => {
             this.playCharacter();
         }, 50);
     }
@@ -116,45 +119,45 @@ class Character  extends MovableObject {
         this.handleJump();
         this.world.camera_x = -this.x + 100;
     }
-    
-   handleRight() {
-    if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-        this.moveRight();
-        this.otherDirection = false;
-        this.snoring.pause();
-        this.lastActionTime = new Date().getTime();
-        if (!this.isAboveGround()) {
-            this.walking.play();
-        } else {
-            this.walking.pause();
+
+    handleRight() {
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+            this.snoring.pause();
+            this.lastActionTime = new Date().getTime();
+            if (!this.isAboveGround()) {
+                this.walking.play();
+            } else {
+                this.walking.pause();
+            }
         }
     }
-}
 
-handleLeft() {
-    if (this.world.keyboard.LEFT && this.x > 0) {
-        this.moveLeft();
-        this.otherDirection = true;
-        this.snoring.pause();
-        this.lastActionTime = new Date().getTime();
-        if (!this.isAboveGround()) {
-            this.walking.play();
-        } else {
-            this.walking.pause();
+    handleLeft() {
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            this.snoring.pause();
+            this.lastActionTime = new Date().getTime();
+            if (!this.isAboveGround()) {
+                this.walking.play();
+            } else {
+                this.walking.pause();
+            }
         }
     }
-}
 
-handleJump() {
-    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump();
-        this.snoring.pause();
-        this.jumping.currentTime = 0;
-        this.jumping.play();
-        this.walking.pause();
-        this.lastActionTime = new Date().getTime();
+    handleJump() {
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+            this.snoring.pause();
+            this.jumping.currentTime = 0;
+            this.jumping.play();
+            this.walking.pause();
+            this.lastActionTime = new Date().getTime();
+        }
     }
-}
 
     jump() {
         this.speedY = 30;
@@ -171,83 +174,99 @@ handleJump() {
     /**
  * Plays dead animation if character is dead.
  */
-handleDeadAnimation() {
-    if (this.isDead()) {
-        this.playAnimation(this.IMAGES_DEAD);
-        this.snoring.pause();
-        this.pepeIsDead();
+    handleDeadAnimation() {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+            this.snoring.pause();
+            this.pepeIsDead();
+        }
     }
-}
 
-/**
- * Plays hurt animation if character is hurt.
- */
-handleHurtAnimation() {
-    if (this.isHurt() && !this.isDead()) {
-        this.playAnimation(this.IMAGES_HURT);
-        this.snoring.pause();
+    /**
+     * Plays hurt animation if character is hurt.
+     */
+    handleHurtAnimation() {
+        if (this.isHurt() && !this.isDead()) {
+            this.playAnimation(this.IMAGES_HURT);
+            this.snoring.pause();
+        }
     }
-}
 
-/**
- * Plays jumping animation if character is in the air.
- */
-handleJumpingAnimation() {
-    if (this.isAboveGround() && !this.isDead() && !this.isHurt()) {
-        this.playAnimation(this.IMAGES_JUMPING);
-        this.snoring.pause();
+    /**
+     * Plays jumping animation if character is in the air.
+     */
+    handleJumpingAnimation() {
+        if (this.isAboveGround() && !this.isDead() && !this.isHurt()) {
+            this.playAnimation(this.IMAGES_JUMPING);
+            this.snoring.pause();
+        }
     }
-}
 
-/**
- * Plays walking animation if character is moving left or right.
- */
-handleWalkingAnimation() {
-    if (!this.isAboveGround() &&
-        !this.isDead() &&
-        !this.isHurt() &&
-        (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-        this.playAnimation(this.IMAGES_WALKING);
-        this.snoring.pause();
+    /**
+     * Plays walking animation if character is moving left or right.
+     */
+    handleWalkingAnimation() {
+        if (!this.isAboveGround() &&
+            !this.isDead() &&
+            !this.isHurt() &&
+            (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+            this.playAnimation(this.IMAGES_WALKING);
+            this.snoring.pause();
+        }
     }
-}
 
     idleCharacter() {
         setInterval(() => {
             let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-            if (timeSinceLastAction > 500) {
+            if (timeSinceLastAction > 500 && !this.isThrowingBottle) {
                 this.playAnimation(this.IMAGES_IDLE);
             }
         }, 400);
     }
-    
-      idleLongCharacter() {
+
+
+    idleLongCharacter() {
         setInterval(() => {
             let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-            if (timeSinceLastAction > 3000) {
+            if (timeSinceLastAction > 3000 && !this.isThrowingBottle) {
                 this.playAnimation(this.IMAGES_LONG_IDLE);
                 this.snoring.play();
             }
         }, 400);
     }
-    
 
-     pepeIsDead() {
-    if (this.energy == 0) {
-        this. deadAudio.play();
-        setTimeout(() => {
-            gameOver();
-        }, 1000);
+    pepeIsDead() {
+        if (this.energy == 0) {
+            this.deadAudio.play();
+            setTimeout(() => {
+                gameOver();
+            }, 1000);
+        }
     }
-}
 
 jumpOn(enemy) {
+    if (enemy.isDead) return;
+    this.speedY = 15;
     enemy.die();
-    this.speedY = 15; 
-    this.jumping.play();  
+    this.jumping.play();
 }
 
-    
+
+    collectCoin() {
+        this.amountCoins += 20;
+        if (this.amountCoins > 100) {
+            this.amountCoins = 100;
+        }
+    }
+
+    collectBottle() {
+        this.amountBottle += 1;
+        if (this.amountBottle > 100) {
+            this.amountBottle = 100;
+        }
+    }
+
+
 }
 
 

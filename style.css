@@ -74,6 +74,7 @@ canvas {
     font-size: 40px;
     gap: 16px;
     align-items: center;
+    margin-top: 340px;
 
 }
 
@@ -81,6 +82,8 @@ canvas {
     width: 40px;
     cursor: pointer;
     transition: transform 0.3s ease;
+    height: 40px;
+    margin-top: 340px;
 }
 
 .volume:hover {
