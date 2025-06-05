@@ -14,13 +14,14 @@ class Character extends MovableObject {
     deadAudio = new Audio('audio/dead_audio.mp3');
     walking = new Audio('audio/running.mp3');
     jumping = new Audio('audio/jump.mp3');
+    hurt_sound = new Audio('audio/hurt.mp3');
 
     offset = {
         top: 80,
         left: 20,
-        right: 25,
+        right: 20,
         bottom: 10
-    }
+    };
 
     lastActionTime = new Date().getTime();
 
@@ -121,6 +122,7 @@ class Character extends MovableObject {
         this.handleRight();
         this.handleLeft();
         this.handleJump();
+        this.checkEndbossCollision();
         this.world.camera_x = -this.x + 100;
     }
 
@@ -181,9 +183,6 @@ class Character extends MovableObject {
         this.handleWalkingAnimation();
     }
 
-    /**
-     * Plays dead animation if character is dead.
-     */
     handleDeadAnimation() {
         if (this.isDead()) {
             this.playAnimation(this.IMAGES_DEAD);
@@ -192,9 +191,6 @@ class Character extends MovableObject {
         }
     }
 
-    /**
-     * Plays hurt animation if character is hurt.
-     */
     handleHurtAnimation() {
         if (this.isHurt() && !this.isDead()) {
             this.playAnimation(this.IMAGES_HURT);
@@ -202,9 +198,6 @@ class Character extends MovableObject {
         }
     }
 
-    /**
-     * Plays jumping animation if character is in the air.
-     */
     handleJumpingAnimation() {
         if (this.isAboveGround() && !this.isDead() && !this.isHurt()) {
             this.playAnimation(this.IMAGES_JUMPING);
@@ -212,9 +205,6 @@ class Character extends MovableObject {
         }
     }
 
-    /**
-     * Plays walking animation if character is moving left or right.
-     */
     handleWalkingAnimation() {
         if (!this.isAboveGround() &&
             !this.isDead() &&
@@ -273,6 +263,26 @@ class Character extends MovableObject {
             this.amountBottle = 100;
         }
     }
+
+    checkEndbossCollision() {
+        const boss = this.world.endboss;
+        if (!boss || boss.isDead) return;
+        if (this.isColliding(boss)) {
+            if (!this.isHurt()) {
+                this.hit(60);
+                this.world.statusBar.setPercentage(this.energy);
+                this.hurt_sound.play();
+            }
+            if (this.x < boss.x) {
+                this.x = boss.x - this.width - 5;
+            } else {
+                this.x = boss.x + boss.width + 5;
+            }
+        }
+    }
+
+
+
 
 
 }

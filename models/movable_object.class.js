@@ -34,23 +34,27 @@ class MovableObject extends DrawableObject {
   }
 
   // character.isColliding(chicken);
-  isColliding(mo) {
+ isColliding(mo) {
+    if (!mo) return false;
     return (
-      this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
-      this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-      this.x + this.offset.left < mo.x - mo.offset.right &&
-      this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
+        this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+        this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+        this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+        this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom
     );
-  }
+}
 
-  hit() {
-    this.energy -= 5;
+
+
+
+  hit(damage = 5) {
+    this.energy -= damage;
     if (this.energy < 0) {
-      this.energy = 0;
+        this.energy = 0;
     } else {
-      this.lastHit = new Date().getTime();
+        this.lastHit = new Date().getTime();
     }
-  }
+}
 
   isHurt() {
     let timepassed = new Date().getTime() - this.lastHit; // Difference in ms
@@ -77,7 +81,7 @@ class MovableObject extends DrawableObject {
   jumpOn(enemy) {
     if (enemy && typeof enemy.die === 'function') {
       enemy.die();
-      this.speedY = 15; // отскакиваем вверх после убийства
+      this.speedY = 15;
     }
   }
 
@@ -106,17 +110,17 @@ class MovableObject extends DrawableObject {
     }, 1000 / 60);
   }
 
-   playOnce(images, duration) {
-          let i = 0;
-          let interval = setInterval(() => {
-            if (i >= images.length) {
-              clearInterval(interval);
-            } else {
-              this.img = this.imageCache[images[i]];
-              i++;
-            }
-          }, duration / images.length);
-        }
+  playOnce(images, duration) {
+    let i = 0;
+    let interval = setInterval(() => {
+      if (i >= images.length) {
+        clearInterval(interval);
+      } else {
+        this.img = this.imageCache[images[i]];
+        i++;
+      }
+    }, duration / images.length);
+  }
 
 
 

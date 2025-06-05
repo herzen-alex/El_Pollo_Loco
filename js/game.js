@@ -1,15 +1,15 @@
 
 let canvas;
 
-let world; 
+let world;
 
 let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);  
+    world = new World(canvas, keyboard);
 
-     setupMobileControls();
+    setupMobileControls();
 }
 
 window.addEventListener("keydown", (e) => {
@@ -57,7 +57,7 @@ window.addEventListener("keyup", (e) => {
 
     if (e.keyCode == 32) {
         keyboard.SPACE = false;
-    } 
+    }
 
     if (e.keyCode == 68) {
         keyboard.D = false;
@@ -87,8 +87,8 @@ function setupMobileControls() {
     });
 
     document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-        exitFullscreenMode();
-    }
-});
+        if (e.key === "Escape") {
+            exitFullscreenMode();
+        }
+    });
 }
