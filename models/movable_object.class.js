@@ -13,6 +13,7 @@ class MovableObject extends DrawableObject {
     bottom: 0,
   };
 
+
   applyGravity() {
     setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
@@ -105,6 +106,17 @@ class MovableObject extends DrawableObject {
     }, 1000 / 60);
   }
 
+   playOnce(images, duration) {
+          let i = 0;
+          let interval = setInterval(() => {
+            if (i >= images.length) {
+              clearInterval(interval);
+            } else {
+              this.img = this.imageCache[images[i]];
+              i++;
+            }
+          }, duration / images.length);
+        }
 
 
 

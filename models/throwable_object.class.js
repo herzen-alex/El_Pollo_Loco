@@ -13,6 +13,8 @@ class ThrowableObject extends MovableObject {
         right: 5
     };
 
+    collidedWith = {};
+
     IMAGES_ROTATION = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
         'img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
@@ -38,12 +40,12 @@ class ThrowableObject extends MovableObject {
         this.height = 70;
         this.character = character;
         this.direction = direction;
-        this.trow();
+        this.throw();
         this.animateRotation();
 
     }
 
-    trow() {
+    throw() {
         this.throwAudio.play();
         this.speedY = 30;
         this.applyGravity();

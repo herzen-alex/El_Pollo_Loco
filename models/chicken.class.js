@@ -4,7 +4,7 @@ class Chicken extends MovableObject {
     y = 325;
     isDead = false;
     energy = 10;
-     isSplicable = false;
+    isSplicable = false;
 
     offset = {
       top: 3,
@@ -12,6 +12,7 @@ class Chicken extends MovableObject {
       left: 5,
       right: 5,
     };
+    world;
 
 
     chicken_sound = new Audio('audio/chicken.mp3');
@@ -53,13 +54,18 @@ class Chicken extends MovableObject {
         }
     }
 
-  die() {
-    this.isDead = true;
-    this.speed = 0;
-    this.playOnce(this.IMAGES_DEAD, 500);
-    setTimeout(() => {
-        this.isSplicable = true; 
-    }, 500);
-}
+ die() {
+        this.isDead = true;
+        this.speed = 0;
+        this.chicken_sound.play();
+        setTimeout(() => {
+            this.chicken_sound.pause();
+            this.chicken_sound.currentTime = 0;
+        }, 1000);
+        this.playOnce(this.IMAGES_DEAD, 500);
+        setTimeout(() => {
+            this.isSplicable = true; 
+        }, 500);
+    }
 
 }

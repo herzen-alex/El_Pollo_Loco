@@ -57,11 +57,15 @@ class Small_Chicken extends MovableObject {
     die() {
         this.isDead = true;
         this.speed = 0;
+        this.small_sound.play();
+        setTimeout(() => {
+            this.small_sound.pause();
+            this.small_sound.currentTime = 0;
+        }, 1000);
         this.playOnce(this.IMAGES_DEAD, 500);
         setTimeout(() => {
-            this.isSplicable = true;
+            this.isSplicable = true; 
         }, 500);
     }
-
 
 }

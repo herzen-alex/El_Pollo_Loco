@@ -8,6 +8,8 @@ let keyboard = new Keyboard();
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);  
+
+     setupMobileControls();
 }
 
 window.addEventListener("keydown", (e) => {
@@ -61,3 +63,32 @@ window.addEventListener("keyup", (e) => {
         keyboard.D = false;
     }
 });
+
+function setupMobileControls() {
+    const buttonMappings = [
+        { id: 'btn_left', key: 'LEFT' },
+        { id: 'btn_right', key: 'RIGHT' },
+        { id: 'btn_jump', key: 'SPACE' },
+        { id: 'btn_throw', key: 'D' }
+    ];
+
+    buttonMappings.forEach(mapping => {
+        const button = document.getElementById(mapping.id);
+        if (button) {
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                keyboard[mapping.key] = true;
+            });
+            button.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                keyboard[mapping.key] = false;
+            });
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        exitFullscreenMode();
+    }
+});
+}

@@ -11,7 +11,7 @@ Audio.prototype.play = function () {
 
 
 function toggleDisplay(elementId, show) {
-    const displayStyle = show ? "block" : "none";
+    const displayStyle = show ? "flex" : "none";
     const el = document.getElementById(elementId);
     if (el) el.style.display = displayStyle;
 }
@@ -24,6 +24,7 @@ function gameOver() {
     toggleDisplay("game_over", true);
     clearAllIntervals();
     if (bg_music) bg_music.pause();
+    Mobile();
 }
 
 function showWinScreen() {
@@ -35,6 +36,7 @@ function showWinScreen() {
     if (document.fullscreenElement) {
         document.exitFullscreen();
     }
+    Mobile();
 }
 
 function startGame() {
@@ -52,6 +54,7 @@ function startGameCore() {
     toggleDisplay("main", false);
     toggleDisplay("canvas", true);
     playBackgroundMusic();
+    Mobile();
 }
 
 function playBackgroundMusic() {
@@ -75,6 +78,7 @@ function backToStart() {
     toggleDisplay("main", true);
     toggleDisplay("canvas", false);
     toggleDisplay("game_win", false);
+    Mobile();
 }
 
 
@@ -150,6 +154,17 @@ function checkRotateDevice() {
         warning.style.display = "flex";
     } else {
         warning.style.display = "none";
+    }
+}
+
+function Mobile() {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const mobileBtns = document.getElementById('mobile_btn');
+    const canvas = document.getElementById('canvas');
+    if (isTouchDevice && canvas.style.display !== 'none') {
+        mobileBtns.style.display = 'flex';
+    } else {
+        mobileBtns.style.display = 'none';
     }
 }
 

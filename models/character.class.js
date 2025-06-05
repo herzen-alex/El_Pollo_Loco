@@ -113,7 +113,11 @@ class Character extends MovableObject {
     }
 
     moveCharacter() {
-        this.walking.pause();
+        if (!this.world.keyboard.RIGHT && !this.world.keyboard.LEFT) {
+            if (!this.walking.paused) {
+                this.walking.pause();
+            }
+        }
         this.handleRight();
         this.handleLeft();
         this.handleJump();
@@ -127,9 +131,12 @@ class Character extends MovableObject {
             this.snoring.pause();
             this.lastActionTime = new Date().getTime();
             if (!this.isAboveGround()) {
-                this.walking.play();
-            } else {
-                this.walking.pause();
+                if (this.walking.paused) {
+                    this.walking.currentTime = 0;
+                    this.walking.play().catch(e => {
+                        if (e.name !== 'AbortError') console.warn("walking sound error:", e);
+                    });
+                }
             }
         }
     }
@@ -141,9 +148,12 @@ class Character extends MovableObject {
             this.snoring.pause();
             this.lastActionTime = new Date().getTime();
             if (!this.isAboveGround()) {
-                this.walking.play();
-            } else {
-                this.walking.pause();
+                if (this.walking.paused) {
+                    this.walking.currentTime = 0;
+                    this.walking.play().catch(e => {
+                        if (e.name !== 'AbortError') console.warn("walking sound error:", e);
+                    });
+                }
             }
         }
     }
@@ -172,8 +182,8 @@ class Character extends MovableObject {
     }
 
     /**
- * Plays dead animation if character is dead.
- */
+     * Plays dead animation if character is dead.
+     */
     handleDeadAnimation() {
         if (this.isDead()) {
             this.playAnimation(this.IMAGES_DEAD);
@@ -224,7 +234,6 @@ class Character extends MovableObject {
         }, 400);
     }
 
-
     idleLongCharacter() {
         setInterval(() => {
             let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
@@ -244,13 +253,12 @@ class Character extends MovableObject {
         }
     }
 
-jumpOn(enemy) {
-    if (enemy.isDead) return;
-    this.speedY = 15;
-    enemy.die();
-    this.jumping.play();
-}
-
+    jumpOn(enemy) {
+        if (enemy.isDead) return;
+        this.speedY = 15;
+        enemy.die();
+        this.jumping.play();
+    }
 
     collectCoin() {
         this.amountCoins += 20;

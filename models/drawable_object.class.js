@@ -53,18 +53,6 @@ class DrawableObject {
             });
         }
 
-        playOnce(images, duration) {
-          let i = 0;
-          let interval = setInterval(() => {
-            if (i >= images.length) {
-              clearInterval(interval);
-            } else {
-              this.img = this.imageCache[images[i]];
-              i++;
-            }
-          }, duration / images.length);
-        }
-
 
         
 
