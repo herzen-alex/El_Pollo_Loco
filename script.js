@@ -1,14 +1,15 @@
 
 let bg_music = new Audio('audio/bg_music.mp3');
-let soundMuted = false;
+soundMuted = JSON.parse(localStorage.getItem("soundMuted")) || false;
 const originalPlay = Audio.prototype.play;
 
 Audio.prototype.play = function () {
-  if (!soundMuted) {
-    return originalPlay.call(this);
-  }
+    if (!soundMuted) {
+        return originalPlay.call(this);
+    } else {
+        return Promise.resolve();
+    }
 };
-
 
 function toggleDisplay(elementId, show) {
     const displayStyle = show ? "flex" : "none";
@@ -53,7 +54,9 @@ function startGameCore() {
     init();
     toggleDisplay("main", false);
     toggleDisplay("canvas", true);
-    playBackgroundMusic();
+    if (!soundMuted) {
+        playBackgroundMusic();
+    }
     Mobile();
 }
 
@@ -113,37 +116,38 @@ function checkOrientation() {
 }
 
 function endGame() {
-  world.gameOver = true;
-  bg_music.pause();
-  clearAllIntervals();
-  startGame();
+    world.gameOver = true;
+    bg_music.pause();
+    clearAllIntervals();
+    startGame();
 }
 
 function initBody() {
-  soundMuted = JSON.parse(localStorage.getItem("soundMuted")) || false;
-  const soundIcon = document.getElementById("volume");
-  if (soundMuted) {
-    soundIcon.src = "assets/back_img/volumeoff.png";
-    bg_music.pause();
-  } else {
-    soundIcon.src = "assets/back_img/volumeon.png";
-  }
+    const soundIcon = document.getElementById("volume");
+    if (soundMuted) {
+        soundIcon.src = "assets/back_img/volumeoff.png";
+        bg_music.pause();
+    } else {
+        soundIcon.src = "assets/back_img/volumeon.png";
+    }
 }
 
+
+
 function toggleVolume() {
-  const soundIcon = document.getElementById("volume");
-  soundMuted = !soundMuted;
-  localStorage.setItem("soundMuted", JSON.stringify(soundMuted));
-  if (soundMuted) {
-    bg_music.pause();
-    soundIcon.src = "assets/back_img/volumeoff.png";
-  } else {
-    if (document.getElementById("canvas").style.display === "block" || 
-        document.getElementById("canvas").style.display === "flex") {
-      bg_music.play();
+    const soundIcon = document.getElementById("volume");
+    soundMuted = !soundMuted;
+    localStorage.setItem("soundMuted", JSON.stringify(soundMuted));
+    if (soundMuted) {
+        bg_music.pause();
+        soundIcon.src = "assets/back_img/volumeoff.png";
+    } else {
+        if (document.getElementById("canvas").style.display === "block" ||
+            document.getElementById("canvas").style.display === "flex") {
+            bg_music.play();
+        }
+        soundIcon.src = "assets/back_img/volumeon.png";
     }
-    soundIcon.src = "assets/back_img/volumeon.png";
-  }
 }
 
 function checkRotateDevice() {
@@ -168,9 +172,53 @@ function Mobile() {
     }
 }
 
+function toggleImpressum() {
+    let overlayRef = document.getElementById('impressum');
+    overlayRef.classList.toggle('imp_none');
+    overlayRef.innerHTML = getOverlayHtml();
+}
+function getOverlayHtml() {
+    return `
+            <div onclick="overlayProtection (event)" class="inner_content">
+                <div class="impressum_main">
+                    <h2>Impressum</h2>
+                    <div class="close_btn" onclick="toggleImpressum()">X</div>
+                </div>
+                <div>
+                    <p>Alex Herzen</p>
+                    <p>Mühlstraße 8</p>
+                    <p>90547 Stein</p>
+                </div>
+
+                <h2>Kontakt</h2>
+                <div class="daten">
+                    <p>E-Mail-Adresse: herzen.alex1@web.de</p>
+                    <span class="">
+                    <a href="https://datenschutz-generator.de/" 
+                       title="Rechtstext von Dr. Schwenke - für weitere Informationen bitte anklicken." 
+                       target="_blank" 
+                       rel="noopener noreferrer nofollow">
+                        Erstellt mit kostenlosem Datenschutz-Generator.de von Dr. Thomas Schwenke
+                    </a>
+                </span>
+                </div>
+                
+            </div>
+    `;
+}
+
+function overlayProtection(event) {
+    event.stopPropagation();
+}
+
 window.addEventListener("resize", checkRotateDevice);
 window.addEventListener("orientationchange", checkRotateDevice);
-window.onload = checkRotateDevice;
+window.addEventListener("load", () => {
+    checkRotateDevice();
+    initBody();
+});
+
+
 
 
 

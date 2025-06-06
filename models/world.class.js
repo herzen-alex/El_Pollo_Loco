@@ -1,11 +1,12 @@
 class World {
 
-    character = new Character();
     level = level1;
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
+
+    character = new Character();
     statusBar = new StatusBar();
     statusBarCoin = new StatusBarCoin();
     statusBarBottle = new StatusBarBottle();
@@ -24,6 +25,7 @@ class World {
         this.draw();
         this.setWorld();
         this.run();
+        this.lastThrowTime = 0;
     }
 
     setWorld() {
@@ -43,16 +45,41 @@ class World {
         }, 200);
     }
 
-    checkThrowObjects() {
-        if (this.keyboard.D && this.character.amountBottle > 0) {
-            let direction = this.character.otherDirection ? 'left' : 'right';
-            let offsetX = direction === 'left' ? -20 : 100;
-            let bottle = new ThrowableObject(this.character.x + offsetX, this.character.y + 100, this.character, direction);
-            this.throwableObjects.push(bottle);
-            this.character.amountBottle--;
-            this.statusBarBottle.setPercentage(this.character.amountBottle * 20);
-        }
+   checkThrowObjects() {
+    const now = Date.now();
+    const throwCooldown = 1500;
+    if (this.canThrowBottle(now, throwCooldown)) {
+        this.throwBottle();
+        this.lastThrowTime = now;
     }
+}
+
+canThrowBottle(now, cooldown) {
+    return (
+        this.keyboard.D &&
+        this.keyboard.canThrow &&
+        this.character.amountBottle > 0 &&
+        now - this.lastThrowTime > cooldown
+    );
+}
+
+throwBottle() {
+    const direction = this.character.otherDirection ? 'left' : 'right';
+    const offsetX = direction === 'left' ? -20 : 100;
+    const bottle = new ThrowableObject(
+        this.character.x + offsetX,
+        this.character.y + 100,
+        this.character,
+        direction
+    );
+    this.throwableObjects.push(bottle);
+    this.character.amountBottle--;
+    this.statusBarBottle.setPercentage(this.character.amountBottle * 20);
+    this.keyboard.canThrow = false;
+}
+
+
+
 
     checkCollidions() {
         this.level.enemies.forEach((enemy) => {

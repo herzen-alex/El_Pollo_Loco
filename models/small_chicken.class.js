@@ -10,8 +10,8 @@ class Small_Chicken extends MovableObject {
     offset = {
         top: 0,
         bottom: 0,
-        left: 5,
-        right: 5,
+        left: 40,
+        right: 40,
     };
 
     small_sound = new Audio('audio/small.mp3');

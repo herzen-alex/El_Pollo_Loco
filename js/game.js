@@ -61,6 +61,7 @@ window.addEventListener("keyup", (e) => {
 
     if (e.keyCode == 68) {
         keyboard.D = false;
+        keyboard.canThrow = true;
     }
 });
 
@@ -82,6 +83,7 @@ function setupMobileControls() {
             button.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 keyboard[mapping.key] = false;
+                keyboard.canThrow = true;
             });
         }
     });

@@ -2,7 +2,7 @@ class Character extends MovableObject {
     y = 150;
     height = 280;
     width = 180;
-    speed = 5;
+    speed = 7;
     isJumping = false;
     world;
     amountCoins = 0;
@@ -174,7 +174,20 @@ class Character extends MovableObject {
     jump() {
         this.speedY = 30;
         this.isJumping = true;
+        this.currentImageIndex = 0;
     }
+
+    playAnimationOnce(images) {
+        if (!this.currentImageIndex || this.currentImageIndex >= images.length) {
+            this.currentImageIndex = 0;
+        }
+        this.img = this.imageCache[images[this.currentImageIndex]];
+        this.currentImageIndex++;
+        if (this.currentImageIndex >= images.length) {
+            this.currentImageIndex = images.length - 1;
+        }
+    }
+
 
     playCharacter() {
         this.handleDeadAnimation();
@@ -200,7 +213,7 @@ class Character extends MovableObject {
 
     handleJumpingAnimation() {
         if (this.isAboveGround() && !this.isDead() && !this.isHurt()) {
-            this.playAnimation(this.IMAGES_JUMPING);
+            this.playAnimationOnce(this.IMAGES_JUMPING);
             this.snoring.pause();
         }
     }
@@ -280,11 +293,6 @@ class Character extends MovableObject {
             }
         }
     }
-
-
-
-
-
 }
 
 

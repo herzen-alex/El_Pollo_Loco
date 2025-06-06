@@ -7,10 +7,10 @@ class Chicken extends MovableObject {
     isSplicable = false;
 
     offset = {
-      top: 3,
+      top: 0,
       bottom: 0,
-      left: 5,
-      right: 5,
+      left: 30,
+      right: 30,
     };
     world;
 

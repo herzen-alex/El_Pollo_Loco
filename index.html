@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html translate="no">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,23 +29,25 @@
     <script src="./script.js"></script>
     <title>El Pollo Loco</title>
 </head>
+
 <body onload="Mobile()" onresize="Mobile()">
 
     <div id="fullscreen" class="fullscreen">
 
         <h1>El Pollo Loco</h1>
-    
+
         <div class="main" id="main" style="display: flex;">
             <div class="main_btn" onclick="startGame()">Start Game</div>
+            <div onclick="toggleImpressum()" class="impressum">Impressum</div>
             <div class="main_menu">
                 <div class="menu">
-                    <div>Move = < > </div>
+                    <div>Move = <>
+                    </div>
                     <div>Throwe = D</div>
                     <div>Jump = Space</div>
                 </div>
-                <img onclick="toggleVolume()" id="volume" class="volume" src="assets/back_img/volumeon.png" alt="">
+                <img onclick="toggleVolume()" id="volume" class="volume" src="" alt="">
             </div>
-
         </div>
 
         <div id="game_over" class="game_over" style="display: none;">
@@ -62,7 +65,7 @@
                 <div class="main_btn" onclick="backToStart()">Back to Start</div>
             </div>
         </div>
-    
+
         <canvas id="canvas" style="display: none;" width="720" height="480"></canvas>
 
         <div class="rotate_device" id="rotate_device" style="display: none;">
@@ -70,19 +73,22 @@
             <img src="./assets/back_img/arrows-381439_640.png" alt="">
         </div>
 
-    <div id="mobile_btn" class="mobile_btn btn_none">
-        <div class="move_btn">
-            <img id="btn_left" src="./assets/back_img/left.png" alt="">
-            <img id="btn_right" src="./assets/back_img/right.png" alt="">
+        <div id="mobile_btn" class="mobile_btn btn_none">
+            <div class="move_btn">
+                <img id="btn_left" src="./assets/back_img/left.png" alt="">
+                <img id="btn_right" src="./assets/back_img/right.png" alt="">
+            </div>
+            <div class="move_btn">
+                <img id="btn_jump" src="./assets/back_img/jump.png" alt="">
+                <img id="btn_throw" src="./assets/back_img/throw.png" alt="">
+            </div>
         </div>
-        <div class="move_btn">
-            <img id="btn_jump" src="./assets/back_img/jump.png" alt="">
-            <img id="btn_throw" src="./assets/back_img/throw.png" alt="">
-        </div>
+
+        <div onclick="toggleImpressum()" id="impressum" class="impressum_content imp_none"></div>
     </div>
 
-    
-    </div>
-    
+   
+
 </body>
+
 </html>

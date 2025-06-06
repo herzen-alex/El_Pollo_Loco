@@ -10,6 +10,8 @@ class Endboss extends MovableObject {
     animateInt;
     speed = 8;
     energy = 100;
+    lastDamageTime = 0;
+    damageCooldown = 1000;
     world;
 
     offset = {
@@ -72,7 +74,20 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.walkLeft();
         this.animate();
+        this.startCollisionCheck();
     }
+
+    checkPlayerCollision() {
+    if (this.isColliding(world.character) && !this.isDead) {
+        this.onCollisionWithPlayer();
+    }
+}
+
+startCollisionCheck() {
+    setInterval(() => {
+        this.checkPlayerCollision();
+    }, 100);
+}
 
     takeDamage(amount) {
         this.energy = Math.max(0, this.energy - amount);
@@ -103,16 +118,15 @@ class Endboss extends MovableObject {
     }
 
     onCollisionWithPlayer() {
-        if (!this.isDead && !this.isAttackingPlayer) {
-            this.isAttackingPlayer = true;
-            this.endbossAttack_sound.play();
-            world.character.hit();
-            this.playOnce(this.IMAGES_ATTACK, 1000);
-            setTimeout(() => {
-                this.isAttackingPlayer = false;
-            }, 1200);
-        }
+    const now = Date.now();
+    if (!this.isDead && now - this.lastDamageTime > this.damageCooldown) {
+        this.lastDamageTime = now;
+        world.characterGetsHurt(this);
+        this.endbossAttack_sound.play();
+        this.playOnce(this.IMAGES_ATTACK, 1000);
     }
+}
+
 
     animate() {
         this.animateInt = setInterval(() => {
@@ -140,27 +154,36 @@ class Endboss extends MovableObject {
         }, 1200);
     }
 
-    playdie() {
-        clearInterval(this.moveleftInt);
-        clearInterval(this.playAniInt);
-        this.speed = 0;
-        this.currentImage = 0;
-        let i = 0;
-        let deathInterval = setInterval(() => {
-            if (i >= this.IMAGES_DEAD.length) {
-                clearInterval(deathInterval);
-                setTimeout(() => {
-                    this.y = -1000;
-                    this.isSplicable = true;
-                    if (world && world.win_sound) world.win_sound.play();
-                    setTimeout(() => showWinScreen(), 1000);
-                }, 1000);
-            } else {
-                this.img = this.imageCache[this.IMAGES_DEAD[i]];
-                i++;
-            }
-        }, 150);
-    }
+   playdie() {
+    this.prepareDeath();
+    let i = 0;
+    const deathInterval = setInterval(() => {
+        if (i >= this.IMAGES_DEAD.length) {
+            clearInterval(deathInterval);
+            this.finishDeath();
+        } else {
+            this.img = this.imageCache[this.IMAGES_DEAD[i]];
+            i++;
+        }
+    }, 150);
+}
+
+prepareDeath() {
+    clearInterval(this.moveleftInt);
+    clearInterval(this.playAniInt);
+    this.speed = 0;
+    this.currentImage = 0;
+}
+
+finishDeath() {
+    setTimeout(() => {
+        this.y = -1000;
+        this.isSplicable = true;
+        if (world && world.win_sound) world.win_sound.play();
+        setTimeout(() => showWinScreen(), 1000);
+    }, 1000);
+}
+
 
     playAlert() {
         if (this.alertActive) return;
