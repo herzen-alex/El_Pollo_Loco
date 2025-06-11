@@ -1,6 +1,18 @@
 
 let level1;
 
+/**
+ * Initializes level1 by creating a new Level instance.
+ * 
+ * - Enemies: Chickens, Small Chickens, and Endboss.
+ * - Clouds: Multiple cloud background objects.
+ * - Background Objects: Air, background layers, etc.
+ * - Coins: Collectible coins.
+ * - Bottles: Collectible bottles.
+ * 
+ * @function
+ * @global
+ */
 function initLevel() {
 
      level1 = new Level(

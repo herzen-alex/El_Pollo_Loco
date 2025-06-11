@@ -1,8 +1,19 @@
 
+/**
+ * Background music audio instance.
+ */
 let bg_music = new Audio('audio/bg_music.mp3');
-soundMuted = JSON.parse(localStorage.getItem("soundMuted")) || false;
-const originalPlay = Audio.prototype.play;
 
+/**
+ * Sound mute state loaded from localStorage.
+ */
+soundMuted = JSON.parse(localStorage.getItem("soundMuted")) || false;
+
+/**
+ * Override Audio.play to respect soundMuted flag.
+ * Plays audio only if sound is not muted; otherwise resolves immediately.
+ */
+const originalPlay = Audio.prototype.play;
 Audio.prototype.play = function () {
     if (!soundMuted) {
         return originalPlay.call(this);
@@ -11,12 +22,20 @@ Audio.prototype.play = function () {
     }
 };
 
+/**
+ * Shows or hides an element by ID based on `show` flag.
+ * @param {string} elementId - The ID of the element.
+ * @param {boolean} show - True to show, false to hide.
+ */
 function toggleDisplay(elementId, show) {
     const displayStyle = show ? "flex" : "none";
     const el = document.getElementById(elementId);
     if (el) el.style.display = displayStyle;
 }
 
+/**
+ * Handles game over state: exits fullscreen, hides canvas, shows game over screen, stops intervals and music.
+ */
 function gameOver() {
     if (document.fullscreenElement) {
         document.exitFullscreen();
@@ -28,6 +47,9 @@ function gameOver() {
     Mobile();
 }
 
+/**
+ * Displays the win screen, stops music and intervals, exits fullscreen.
+ */
 function showWinScreen() {
     clearAllIntervals();
     toggleDisplay("canvas", false);
@@ -40,6 +62,9 @@ function showWinScreen() {
     Mobile();
 }
 
+/**
+ * Starts the game, entering fullscreen on small screens before initializing.
+ */
 function startGame() {
     if (window.innerWidth <= 1023) {
         enterFullscreenMode();
@@ -49,6 +74,9 @@ function startGame() {
     }
 }
 
+/**
+ * Core game start logic: initializes level and UI, starts music if not muted.
+ */
 function startGameCore() {
     initLevel();
     init();
@@ -60,6 +88,9 @@ function startGameCore() {
     Mobile();
 }
 
+/**
+ * Plays background music with looping and volume control if not muted.
+ */
 function playBackgroundMusic() {
     if (bg_music && !soundMuted) {
         bg_music.loop = true;
@@ -69,6 +100,9 @@ function playBackgroundMusic() {
     }
 }
 
+/**
+ * Restarts the game: hides win/over screens, shows canvas, ends current game state.
+ */
 function restartGame() {
     toggleDisplay("game_win", false);
     toggleDisplay("game_over", false);
@@ -76,6 +110,9 @@ function restartGame() {
     endGame();
 }
 
+/**
+ * Returns UI to start screen, hiding game elements and calling mobile setup.
+ */
 function backToStart() {
     toggleDisplay("game_over", false);
     toggleDisplay("main", true);
@@ -84,7 +121,9 @@ function backToStart() {
     Mobile();
 }
 
-
+/**
+ * Requests fullscreen mode on the 'fullscreen' element and resizes the canvas.
+ */
 function enterFullscreenMode() {
     const fullscreenElement = document.getElementById('fullscreen');
     const canvas = document.getElementById('canvas');
@@ -99,12 +138,18 @@ function enterFullscreenMode() {
     }
 }
 
+/**
+ * Clears all active intervals (up to 9999).
+ */
 function clearAllIntervals() {
     for (let i = 1; i < 9999; i++) {
         clearInterval(i);
     }
 }
 
+/**
+ * Shows or hides orientation warning based on device orientation.
+ */
 function checkOrientation() {
     const warning = document.getElementById('orientationWarning');
     if (!warning) return;
@@ -115,6 +160,9 @@ function checkOrientation() {
     }
 }
 
+/**
+ * Ends the game: sets gameOver flag, pauses music, clears intervals, restarts game.
+ */
 function endGame() {
     world.gameOver = true;
     bg_music.pause();
@@ -122,6 +170,9 @@ function endGame() {
     startGame();
 }
 
+/**
+ * Initializes sound icon and background music based on mute state.
+ */
 function initBody() {
     const soundIcon = document.getElementById("volume");
     if (soundMuted) {
@@ -132,8 +183,9 @@ function initBody() {
     }
 }
 
-
-
+/**
+ * Toggles sound mute state, updates localStorage, icon, and plays/pauses music accordingly.
+ */
 function toggleVolume() {
     const soundIcon = document.getElementById("volume");
     soundMuted = !soundMuted;
@@ -150,6 +202,9 @@ function toggleVolume() {
     }
 }
 
+/**
+ * Shows a rotate device warning if screen is small and in portrait mode.
+ */
 function checkRotateDevice() {
     const warning = document.getElementById('rotate_device');
     const isPortrait = window.matchMedia("(orientation: portrait)").matches;
@@ -161,6 +216,9 @@ function checkRotateDevice() {
     }
 }
 
+/**
+ * Displays mobile controls if on a touch device and canvas is visible.
+ */
 function Mobile() {
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const mobileBtns = document.getElementById('mobile_btn');
@@ -172,11 +230,18 @@ function Mobile() {
     }
 }
 
+/**
+ * Toggles visibility of the impressum overlay and updates its content.
+ */
 function toggleImpressum() {
     let overlayRef = document.getElementById('impressum');
     overlayRef.classList.toggle('imp_none');
     overlayRef.innerHTML = getOverlayHtml();
 }
+
+/**
+ * Returns HTML content for the impressum overlay.
+ */
 function getOverlayHtml() {
     return `
             <div onclick="overlayProtection (event)" class="inner_content">
@@ -189,7 +254,6 @@ function getOverlayHtml() {
                     <p>Mühlstraße 8</p>
                     <p>90547 Stein</p>
                 </div>
-
                 <h2>Kontakt</h2>
                 <div class="daten">
                     <p>E-Mail-Adresse: herzen.alex1@web.de</p>
@@ -201,18 +265,31 @@ function getOverlayHtml() {
                         Erstellt mit kostenlosem Datenschutz-Generator.de von Dr. Thomas Schwenke
                     </a>
                 </span>
-                </div>
-                
+                </div>     
             </div>
     `;
 }
 
+/**
+ * Stops event propagation to prevent overlay closing when clicking inside.
+ */
 function overlayProtection(event) {
     event.stopPropagation();
 }
 
+/**
+ * On window resize, check device rotation and show warning if needed.
+ */
 window.addEventListener("resize", checkRotateDevice);
+
+/**
+ * On device orientation change, check rotation and show warning if needed.
+ */
 window.addEventListener("orientationchange", checkRotateDevice);
+
+/**
+ * On page load, check rotation and initialize page elements.
+ */
 window.addEventListener("load", () => {
     checkRotateDevice();
     initBody();
