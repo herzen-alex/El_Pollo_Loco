@@ -12,11 +12,12 @@ class Endboss extends MovableObject {
     moveleftInt;
     playAniInt;
     animateInt;
-    speed = 8;
+    speed = 0;
     energy = 100;
     lastDamageTime = 0;
     damageCooldown = 1000;
     world;
+    firstHitTaken = false;
 
     /**
      * Offset values for collision detection or positioning.
@@ -113,6 +114,7 @@ class Endboss extends MovableObject {
         this.walkLeft();
         this.animate();
         this.startCollisionCheck();
+        this.startAggressiveLoop();
     }
 
     /**
@@ -146,6 +148,10 @@ class Endboss extends MovableObject {
     takeDamage(amount) {
         this.energy = Math.max(0, this.energy - amount);
         this.lastHit = new Date().getTime();
+        if (!this.firstHitTaken) {
+            this.firstHitTaken = true;
+            this.speed = 15;
+        }
         if (this.energy === 0 && !this.isDead) {
             this.isDead = true;
             this.playdie();
@@ -318,7 +324,7 @@ class Endboss extends MovableObject {
         clearInterval(this.moveleftInt);
         clearInterval(this.playAniInt);
         clearInterval(this.animateInt);
-        this.speed = 60;
+        this.speed = 20;
         this.playOnce(this.IMAGES_ATTACK, 2800);
         setTimeout(() => {
             this.alertattack = false;
@@ -326,4 +332,48 @@ class Endboss extends MovableObject {
             this.animate();
         }, 3300);
     }
+
+    /**
+     * Starts the boss's aggressive behavior after first hit.
+     * Boss hunts the player and attacks when close.
+     */
+    startAggressiveLoop() {
+        setInterval(() => {
+            if (this.firstHitTaken && !this.isDead) {
+                this.huntPlayer();
+                if (!this.alertattack && this.isPlayerClose()) {
+                    this.playAttack();
+                }
+            }
+        }, 3000);
+    }
+
+    /**
+     * Moves the boss toward the player's position.
+     * Adjusts direction based on player's x-coordinate.
+     */
+    huntPlayer() {
+        clearInterval(this.moveleftInt);
+        clearInterval(this.playAniInt);
+        this.moveleftInt = setInterval(() => {
+            if (world.character.x < this.x) {
+                this.x -= this.speed;
+            } else if (world.character.x > this.x) {
+                this.x += this.speed;
+            }
+        }, 50);
+        this.playAniInt = setInterval(() => {
+            this.playAnimation(this.IMAGES_WALKING);
+        }, 150);
+    }
+
+    /**
+     * Checks if the player is within attack range.
+     * @returns {boolean} True if player is closer than 300px
+     */
+    isPlayerClose() {
+        const distance = Math.abs(this.x - world.character.x);
+        return distance < 300;
+    }
+
 }

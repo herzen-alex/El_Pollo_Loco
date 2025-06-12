@@ -40,7 +40,7 @@ function gameOver() {
     if (document.fullscreenElement) {
         document.exitFullscreen();
     }
-    toggleDisplay("canvas", false);
+    toggleDisplay("game_container", false);
     toggleDisplay("game_over", true);
     clearAllIntervals();
     if (bg_music) bg_music.pause();
@@ -55,7 +55,7 @@ function gameOver() {
  */
 function showWinScreen() {
     clearAllIntervals();
-    toggleDisplay("canvas", false);
+    toggleDisplay("game_container", false);
     toggleDisplay("game_win", true);
     toggleDisplay("main", false);
     if (bg_music) bg_music.pause();
@@ -84,7 +84,7 @@ function startGameCore() {
     initLevel();
     init();
     toggleDisplay("main", false);
-    toggleDisplay("canvas", true);
+    toggleDisplay("game_container", true);
     if (!soundMuted) {
         playBackgroundMusic();
     }
@@ -109,7 +109,7 @@ function playBackgroundMusic() {
 function restartGame() {
     toggleDisplay("game_win", false);
     toggleDisplay("game_over", false);
-    toggleDisplay("canvas", true);
+    toggleDisplay("game_container", true);
     endGame();
 }
 
@@ -119,7 +119,7 @@ function restartGame() {
 function backToStart() {
     toggleDisplay("game_over", false);
     toggleDisplay("main", true);
-    toggleDisplay("canvas", false);
+    toggleDisplay("game_container", false);
     toggleDisplay("game_win", false);
     Mobile();
 }
@@ -190,18 +190,34 @@ function initBody() {
  * Toggles sound mute state, updates localStorage, icon, and plays/pauses music accordingly.
  */
 function toggleVolume() {
-    const soundIcon = document.getElementById("volume");
     soundMuted = !soundMuted;
     localStorage.setItem("soundMuted", JSON.stringify(soundMuted));
+    updateSoundIcon();
     if (soundMuted) {
         bg_music.pause();
-        soundIcon.src = "assets/back_img/volumeoff.png";
     } else {
-        if (document.getElementById("canvas").style.display === "block" ||
-            document.getElementById("canvas").style.display === "flex") {
-            bg_music.play();
-        }
-        soundIcon.src = "assets/back_img/volumeon.png";
+        playBgMusicIfVisible();
+    }
+}
+
+/**
+ * Updates the sound icon based on the current mute state.
+ */
+function updateSoundIcon() {
+    const icon = document.getElementById("volume");
+    icon.src = soundMuted
+        ? "assets/back_img/volumeoff.png"
+        : "assets/back_img/volumeon.png";
+}
+
+/**
+ * Plays background music if the game is active and sound is not muted.
+ */
+function playBgMusicIfVisible() {
+    const visible = document.getElementById("game_container").style.display !== "none";
+    if (visible) {
+        bg_music.currentTime = 0;
+        bg_music.play().catch(e => console.warn("Music play error:", e));
     }
 }
 
@@ -225,7 +241,7 @@ function checkRotateDevice() {
 function Mobile() {
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const mobileBtns = document.getElementById('mobile_btn');
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('game_container');
     if (isTouchDevice && canvas.style.display !== 'none') {
         mobileBtns.style.display = 'flex';
     } else {

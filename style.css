@@ -31,6 +31,15 @@ canvas {
     display: block;
 }
 
+.game_container {
+    position: relative;
+    width: 720px;
+    height: 480px;
+    margin: 0 auto;
+}
+
+
+
 .main {
     background-image: url('img/9_intro_outro_screens/start/startscreen_1.png');
     display: flex;
@@ -67,15 +76,18 @@ canvas {
 .menu {
     display: flex;
     font-size: 40px;
-    gap: 16px;
+    gap: 32px;
     align-items: center;
 }
 
 .volume {
+    position: absolute;
+    top: 60px;
+    right: 20px;
     width: 40px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
     height: 40px;
+    cursor: pointer;
+    z-index: 5;
 }
 
 .volume:hover {
