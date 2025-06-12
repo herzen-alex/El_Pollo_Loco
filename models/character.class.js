@@ -323,7 +323,7 @@ class Character extends MovableObject {
     idleLongCharacter() {
         setInterval(() => {
             let timeSinceLastAction = new Date().getTime() - this.lastActionTime;
-            if (timeSinceLastAction > 3000 && !this.isThrowingBottle) {
+            if (timeSinceLastAction > 4000 && !this.isThrowingBottle) {
                 this.playAnimation(this.IMAGES_LONG_IDLE);
                 this.snoring.play();
             }

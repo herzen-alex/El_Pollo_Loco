@@ -44,6 +44,9 @@ function gameOver() {
     toggleDisplay("game_over", true);
     clearAllIntervals();
     if (bg_music) bg_music.pause();
+    if (world?.endboss?.pauseAllSounds) {
+        world.endboss.pauseAllSounds();
+    }
     Mobile();
 }
 

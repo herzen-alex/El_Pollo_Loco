@@ -312,7 +312,7 @@ class World {
     characterGetsHurt(enemy) {
         let damage = 5;
         if (enemy instanceof Endboss) {
-            damage = 60;
+            damage = 90;
         }
         this.character.hit(damage);
         this.hurt_sound.play();
@@ -355,7 +355,7 @@ class World {
             enemy.takeDamage(12.5);
             this.statusBarEndboss.setPercentage(enemy.energy);
         } else {
-            enemy.takeDamage(75);
+            enemy.takeDamage(90);
         }
     }
 
