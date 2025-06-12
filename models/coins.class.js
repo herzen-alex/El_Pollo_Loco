@@ -14,10 +14,10 @@ class Coin extends MovableObject {
      * @type {{top: number, left: number, right: number, bottom: number}}
      */
     offset = {
-        top: 40,
-        bottom: 40,
-        left: 40,
-        right: 40
+        top: 35,
+        bottom: 50,
+        left: 35,
+        right: 35
     };
 
     /**

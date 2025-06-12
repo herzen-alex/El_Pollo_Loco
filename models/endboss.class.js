@@ -12,7 +12,7 @@ class Endboss extends MovableObject {
     moveleftInt;
     playAniInt;
     animateInt;
-    speed = 0;
+    speed = 1;
     energy = 100;
     lastDamageTime = 0;
     damageCooldown = 1000;
@@ -25,8 +25,8 @@ class Endboss extends MovableObject {
      */
     offset = {
         top: 0,
-        left: 130,
-        right: 130,
+        left: 110,
+        right: 110,
         bottom: 0
     };
 
@@ -150,7 +150,7 @@ class Endboss extends MovableObject {
         this.lastHit = new Date().getTime();
         if (!this.firstHitTaken) {
             this.firstHitTaken = true;
-            this.speed = 15;
+            this.speed = 18;
         }
         if (this.energy === 0 && !this.isDead) {
             this.isDead = true;
@@ -192,14 +192,14 @@ class Endboss extends MovableObject {
      * Applies damage cooldown and plays attack animation and sound.
      */
     onCollisionWithPlayer() {
-        const now = Date.now();
-        if (!this.isDead && now - this.lastDamageTime > this.damageCooldown) {
-            this.lastDamageTime = now;
-            world.characterGetsHurt(this);
-            this.endbossAttack_sound.play();
-            this.playOnce(this.IMAGES_ATTACK, 1000);
-        }
+    const now = Date.now();
+    if (!this.isDead && now - this.lastDamageTime > this.damageCooldown) {
+        this.lastDamageTime = now;
+        this.endbossAttack_sound.play();
+        this.playOnce(this.IMAGES_ATTACK, 1000);
+        world.character.handlePlayerHit(this); // ← вместо этого
     }
+}
 
     /**
      * animate
@@ -324,7 +324,7 @@ class Endboss extends MovableObject {
         clearInterval(this.moveleftInt);
         clearInterval(this.playAniInt);
         clearInterval(this.animateInt);
-        this.speed = 20;
+        this.speed = 25;
         this.playOnce(this.IMAGES_ATTACK, 2800);
         setTimeout(() => {
             this.alertattack = false;
@@ -345,7 +345,7 @@ class Endboss extends MovableObject {
                     this.playAttack();
                 }
             }
-        }, 3000);
+        }, 2000);
     }
 
     /**

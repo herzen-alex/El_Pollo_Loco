@@ -12,6 +12,7 @@ class Character extends MovableObject {
     amountCoins = 0;
     amountBottle = 0;
     isThrowingBottle = false;
+    canBeHit = true;
 
     /**
      * Audio elements for various character sounds (snoring, dead, walking, jumping, hurt).
@@ -240,16 +241,26 @@ class Character extends MovableObject {
      * Plays animation sequence once for given images.
      * @param {string[]} images - Array of image paths.
      */
-    playAnimationOnce(images) {
-        if (!this.currentImageIndex || this.currentImageIndex >= images.length) {
-            this.currentImageIndex = 0;
-        }
+    playAnimationOnce(images, frameDuration = 100) {
+    if (!this.currentImageIndex) this.currentImageIndex = 0;
+    if (this.lastFrameTime === undefined) this.lastFrameTime = 0;
+
+    let now = Date.now();
+
+    // Проверяем, прошло ли нужное время для смены кадра
+    if (now - this.lastFrameTime > frameDuration) {
         this.img = this.imageCache[images[this.currentImageIndex]];
         this.currentImageIndex++;
-        if (this.currentImageIndex >= images.length) {
-            this.currentImageIndex = images.length - 1;
-        }
+        this.lastFrameTime = now;
     }
+
+    // Если дошли до последнего кадра - останавливаем анимацию
+    if (this.currentImageIndex >= images.length) {
+        this.currentImageIndex = images.length - 1;  // Оставляем последний кадр
+        return true;  // Можно вернуть true, чтобы знать, что анимация закончилась
+    }
+    return false; // Анимация ещё идёт
+}
 
     /**
      * Updates character animations based on state.
@@ -402,7 +413,16 @@ class Character extends MovableObject {
      * @param {Object} boss - Endboss object.
      */
     adjustPlayerPosition(boss) {
-        this.x = (this.x < boss.x) ? boss.x - this.width - 5 : boss.x + boss.width + 5;
+        const overlap =
+            this.x + this.width > boss.x &&
+            this.x < boss.x + boss.width;
+        if (!overlap) return;
+        let pushStrength = 30;
+        if (this.x < boss.x) {
+            this.x -= pushStrength;
+        } else {
+            this.x += pushStrength;
+        }
     }
 
     /**

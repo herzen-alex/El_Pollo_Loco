@@ -3,6 +3,7 @@
  * Background music audio instance.
  */
 let bg_music = new Audio('audio/bg_music.mp3');
+bg_music.volume = 0.1;
 
 /**
  * Sound mute state loaded from localStorage.

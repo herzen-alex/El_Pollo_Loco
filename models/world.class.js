@@ -310,14 +310,11 @@ class World {
      * @param {Object} enemy - Enemy causing damage.
      */
     characterGetsHurt(enemy) {
-        let damage = 5;
-        if (enemy instanceof Endboss) {
-            damage = 90;
-        }
-        this.character.hit(damage);
-        this.hurt_sound.play();
-        this.statusBar.setPercentage(this.character.energy);
-    }
+    let damage = 5;
+    this.character.hit(damage);
+    this.hurt_sound.play();
+    this.statusBar.setPercentage(this.character.energy);
+}
 
     /**
      * Checks collisions between throwable bottles and enemies, removes splashed bottles.
@@ -352,7 +349,7 @@ class World {
      */
     handleEnemyDamage(enemy) {
         if (enemy instanceof Endboss) {
-            enemy.takeDamage(12.5);
+            enemy.takeDamage(19);
             this.statusBarEndboss.setPercentage(enemy.energy);
         } else {
             enemy.takeDamage(90);
